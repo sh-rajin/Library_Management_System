@@ -109,7 +109,7 @@ class UserAccountUpdateForm(forms.ModelForm):
         if commit:
             user.save()
 
-            user_account = UserLibraryAccount.objects.get(user=user) # jodi account thake taile seta jabe user_account ar jodi account na thake taile create hobe ar seta created er moddhe jabe
+            user_account = UserLibraryAccount.objects.get(user=user)
             user_address = UserAddress.objects.get(user=user) 
 
             user_account.gender = self.cleaned_data['gender']

@@ -50,12 +50,12 @@ class BookDetailView(View):
     def get(self, request, *args, **kwargs):
         book_id = kwargs.get('id')
         book = Book.objects.get(id=book_id)
-        review_form = forms.ReviewForm()  # Initialize an empty form
-        reviews = book.reviews.all()  # Fetch all reviews for the book
+        review_form = forms.ReviewForm()
+        reviews = book.reviews.all()
         return render(request, 'library/details.html', {
             'book': book,
             'reviews': reviews,
-            'form': review_form,  # Pass the form to the template
+            'form': review_form,
         })
 
     def post(self, request, *args, **kwargs):
@@ -72,7 +72,6 @@ class BookDetailView(View):
                 messages.success(request, "Your review has been submitted.")
                 return redirect('book_detail', id=book_id)
 
-            # Render the page with form errors if the form is invalid
             reviews = report_book.book.reviews.all()
             return render(request, 'books/details.html', {
                 'book': report_book.book,
@@ -81,7 +80,6 @@ class BookDetailView(View):
             })
 
         except Report.DoesNotExist:
-            # Handle the case where the user has not borrowed the book
             messages.error(request, "You can only review books you have borrowed.")
             return redirect('book_detail', id=book_id)
 
@@ -96,17 +94,14 @@ class BorrowBookView(View):
         user_account = request.user.account
         
         if user_account.balance >= book.price:
-            # Check if the user has already borrowed this book and not returned it
             borrowed_book = Report.objects.filter(book=book, user=request.user.account, is_returned=False).first()
             
             if borrowed_book:
                 messages.error(request, 'Book already borrowed!')
             else:
-                # Deduct balance for borrowing
                 user_account.balance -= book.price
                 user_account.save()
 
-                # Create a new borrowing record
                 Report.objects.create(
                     user=user_account,
                     book=book,

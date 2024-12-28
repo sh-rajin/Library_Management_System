@@ -12,7 +12,6 @@ class DepositAdmin(admin.ModelAdmin):
     
     def save_model(self, request, obj, form, change):
         obj.user.balance += obj.amount
-        # send_transaction_mail(obj.account, obj.account.account_no, obj.amount ,"Loan Approval", "transactions/loan_approval.html")
         obj.user.save()
         
         super().save_model(request, obj, form, change)

@@ -98,7 +98,7 @@ class UserAccountUpdateView(View):
         if form.is_valid():
             form.save()
             messages.success(self.request, "Profile updated successfully!")
-            return redirect('profile')  # Redirect to the user's profile page
+            return redirect('profile') 
         return render(request, self.template_name, {'form': form})
     
 
