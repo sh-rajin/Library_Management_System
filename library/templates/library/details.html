@@ -1,0 +1,135 @@
+{% extends "core/base.html" %}
+{% block content %}
+{% load static %}
+<div class="relative z-10" role="dialog" aria-modal="true">
+
+    <div class="inset-0 hidden bg-gray-500/75 transition-opacity md:block" aria-hidden="true"></div>
+  
+    <div class="inset-0 z-10 w-screen overflow-y-auto">
+      <div class="flex min-h-full items-stretch justify-center text-center md:items-center md:px-2 lg:px-4">
+        <div class="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-4xl">
+          <div class="relative flex w-full items-center overflow-hidden bg-white px-4 pb-8 pt-14 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
+            <button type="button" class="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8">
+              <span class="sr-only">Close</span>
+              <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+  
+            <div class="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8">
+              <img src="{{ book.image.url }}" alt="{{book.title}}" class="aspect-[2/3] w-full rounded-lg bg-gray-100 object-cover sm:col-span-4 lg:col-span-5">
+              <div class="sm:col-span-8 lg:col-span-7">
+                <h2 class="text-2xl font-bold text-gray-900 sm:pr-12">{{book.title}}</h2>
+                
+                <h3 class="text-2xl font-semibold text-gray-900 mt-2">{{book.author}}</h3>
+  
+                <section aria-labelledby="information-heading" class="mt-2">
+                  <h3 id="information-heading" class="sr-only">Product information</h3>
+                  <p>Category : <button disabled="disabled" class="mt-3 rounded-lg bg-yellow-400 text-white py-1 px-3">{{book.category}}</button></p>
+                    <p class="text-gray-600 my-5"><span class="text-gray-900">Description : </span><br>{{book.description}}</p>
+                  <p class="text-2xl text-gray-900">Price : {{book.price}}</p>
+  
+                  <!-- Reviews -->
+                  <div class="mt-6">
+                    <h4 class="sr-only">Reviews</h4>
+                    <div class="flex items-center">
+                      <p class="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500 mb-3">{{reviews | length}} reviews</p>
+                    </div>
+                  </div>
+                </section>
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'borrow_book' book.id %}" class="btn flex justify-center bg-blue-400 hover:bg-blue-500 text-white font-semibold py-1 px-3 rounded">Buy</a>
+                {% else %}
+                <a href="{% url 'user_login' %}?next={{ request.path }}" class="btn flex justify-center bg-blue-400 hover:bg-blue-500 text-white font-semibold py-1 px-3 rounded">Login to Buy</a>
+                {% endif %}              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div class="m-10 p-3">
+        <h2 class="text-center text-white font-bold text-2xl mb-3" action = "all_reviews">All Reviews</h2>
+        <hr>
+        <div class="p-5 m-2 bg-white rounded-md">
+        {% for review in reviews %}
+          <div class="my-3">
+            <h6>{{review.name}}</h6>
+            <p>{{review.email}}</p>
+            <h5>Rating : {{review.rating}}</h5>
+            <p class="font-bold">{{review.comment}}</p>
+          </div>
+          <hr>
+          {% endfor %}
+        </div>
+    </div>
+    
+    
+    {% if request.user.is_authenticated %}
+    <div class="w-full flex my-5 justify-center ">
+      <div class="bg-white w-5/12 rounded-lg">
+          
+          <h1 class="font-bold text-3xl text-center pb-5 pt-10 px-5">Review Form</h1>
+          <form method="post" class="px-8 pt-6 pb-8 mb-4">
+              {% csrf_token %}
+  
+              <div class="mb-4">
+                  <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                      Name
+                  </label>
+                  <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight border rounded-md border-gray-500 focus:outline-none focus:shadow-outline" name="name" id="name" type="text" required placeholder="Name">
+              </div>
+              {% if form.name.errors %} {% for error in form.name.errors %}
+              <p class="text-red-600 text-sm italic pb-2">{{ error }}</p>
+              {% endfor %} {% endif %}
+
+              <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                    Email
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight border rounded-md border-gray-500 focus:outline-none focus:shadow-outline" name="email" id="email" type="email" required placeholder="Email">
+            </div>
+            {% if form.email.errors %} {% for error in form.email.errors %}
+            <p class="text-red-600 text-sm italic pb-2">{{ error }}</p>
+            {% endfor %} {% endif %}
+
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="rating">
+                  Rating (out of 5)
+              </label>
+              <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight border rounded-md border-gray-500 focus:outline-none focus:shadow-outline" name="rating" id="rating" type="number" required placeholder="Rating">
+          
+            </div>
+          {% if form.rating.errors %} {% for error in form.rating.errors %}
+          <p class="text-red-600 text-sm italic pb-2">{{ error }}</p>
+          {% endfor %} {% endif %}
+
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="comment">
+                Comment
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight border rounded-md border-gray-500 focus:outline-none focus:shadow-outline" name="comment" id="comment" type="text" required placeholder="Comment">
+        </div>
+        {% if form.comment.errors %} {% for error in form.comment.errors %}
+        <p class="text-red-600 text-sm italic pb-2">{{ error }}</p>
+        {% endfor %} {% endif %}
+              <div class="flex w-full justify-center">
+                  <button class="bg-blue-900 text-white hover:text-blue-900 hover:bg-white border border-blue-900 font-bold px-4 py-2 rounded-lg" type="submit">
+                  Submit
+              </button>
+              </div>
+          </form>
+      </div>
+      
+  </div>  
+  {% else %}
+  <div class="flex justify-center w-full mb-10">
+    <p class="font-bold text-xl text-white">You must be logged in and borrowed to review a book.</p>
+  </div>
+  {% endif %}  
+
+
+
+</div>
+  
+{% endblock %}

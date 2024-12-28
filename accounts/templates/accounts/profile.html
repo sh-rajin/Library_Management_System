@@ -1,0 +1,81 @@
+{% extends "core/base.html" %}
+{% block content %}
+{% load static %}
+{% load humanize %}
+
+{% comment %} <h1>{{request.user}}</h1> {% endcomment %}
+{% if form.non_field_errors %} {% for error in form.non_field_errors %}
+<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-2" role="alert">
+<p class="font-bold">Error!</p>
+<p class="block sm:inline">{{ error }}</p>
+</div>
+{% endfor %} {% endif %} {% if form.non_field_errors %} {% for error in form.non_field_errors %}
+<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-2" role="alert">
+<p class="font-bold">Error!</p>
+<p class="block sm:inline">{{ error }}</p>
+</div>
+{% endfor %} {% endif %}
+<div class="bg-white px-3 py-4 rounded-xl my-6">
+    <h4 class="font-bold text-3xl text-left pb-5 text-center">Library Card NO: {{user_library_account.library_card_no}}</h4>
+    <div class="flex items-center justify-center gap-2 mt-2">
+        <a href="{% url 'profile_update' %}" class="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Update Profile</a>
+    </div>
+</div>
+</div>
+
+
+<div class="my-10 py-3 px-4 bg-white rounded-xl shadow-md">
+    <h1 class="font-bold text-3xl text-center pb-5 pt-2">Report Report</h1>
+    <hr />
+    <table
+      class="table-auto mx-auto w-full px-5 rounded-xl mt-8 border dark:border-neutral-500"
+    >
+      <thead class="bg-purple-900 text-white text-left">
+        <tr
+          class="bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-md py-2 px-4 text-white font-bold"
+        >
+          <th class="px-4 py-2">Date</th>
+          <th class="px-4 py-2">Book Title</th>
+          <th class="px-4 py-2">Book Price</th>
+          <th class="px-4 py-2">Book Return</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if reports %}
+        {% for report in reports %}
+        <tr class="border-b dark:border-neutral-500">
+          <td class="px-4 py-2">
+            {{ report.timestamp|date:"F d, Y h:i A" }}
+          </td>
+          <td class="px-4 py-3 text-s border">
+            <span
+              class="px-2 py-1 font-bold leading-tight rounded-sm text-green-700 bg-green-100"
+            >
+              {{ report.book.title }}
+            </span>
+          </td>
+          <td class="px-4 py-2">
+            $ {{ report.book.price|floatformat:2|intcomma }}
+          </td>
+          <td class="px-4 py-2">
+            {% if not report.is_returned %}
+                <a href="{% url 'return_book' report.id %}" class="btn bg-yellow-600 hover:bg-blue-500 py-2 px-3 rounded-lg text-white font-bold">Return</a>
+            {% else %}
+            <button class="bg-gray-400 py-2 px-3 rounded-lg text-white font-bold" disabled>Returned</button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+        <tr class="bg-gray-800 text-white">
+          <th class="px-4 py-2 text-right" colspan="3">Current Balance</th>
+          <th class="px-4 py-2 text-left">
+            $ {{ user.account.balance|floatformat:2|intcomma }}
+          </th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+{% endblock %}
