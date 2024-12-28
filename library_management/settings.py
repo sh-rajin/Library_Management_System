@@ -139,7 +139,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # List of allowed hosts for CSRF protection
 CSRF_TRUSTED_ORIGINS = [
-    'https://bank-management-system-ozei.onrender.com',
+    'https://library-management-system-2lyo.onrender.com',
 ]
 
 # Default primary key field type
